@@ -21,6 +21,12 @@ private:
     olc::Sprite* m_playerIdleSpriteSheet;
     olc::Decal* m_playerIdleDecal;
     Animation* m_idleAnimation;
+
+    olc::vf2d m_playerPosition;
+    olc::vf2d m_playerVelocity ;
+    float m_acceleration;
+    float m_deceleration;
+    float m_maxSpeed;
 };
 
 
