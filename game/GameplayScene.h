@@ -1,15 +1,16 @@
 #pragma once
 
 #include "IScene.h"
+#include "Player.h"
 
 class GameplayScene : public IScene {
 public:
-    GameplayScene() = default;
+    GameplayScene(olc::PixelGameEngine* pge);
     virtual ~GameplayScene() = default;
 
-    void Update() override {}
-    void Render() override {}
+    void Update(float fElapsedTime) override;
+    void Render() override;
 
 private:
-
+    Player m_player;
 };

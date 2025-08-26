@@ -4,11 +4,11 @@
 
 class MainMenuScene : public IScene {
 public:
-    MainMenuScene() = default;
+    MainMenuScene(olc::PixelGameEngine* pge);
     virtual ~MainMenuScene() = default;
 
-    void Update() override {}
-    void Render() override {}
+    void Update(float fElapsedTime) override;
+    void Render() override;
 
 private:
 
