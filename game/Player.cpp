@@ -1,17 +1,27 @@
 #include "Player.h"
 
+#include "AssetManager.h"
+
 Player::Player() 
 {
-   m_playerIdleSpriteSheet = std::make_unique<olc::Sprite>();
-    if (!m_playerIdleSpriteSheet->LoadFromFile("assets/player_idle.png")) {
-        std::cerr << "Failed to load: assets/player_idle.png" << std::endl;
+    const SpriteSheetInfo& playerInfo = AssetManager::Get().LoadSpriteSheet("assets/assets.json", "player_spritesheet");
+
+    m_playerSpriteSheet = std::make_unique<olc::Sprite>();
+    if (!m_playerSpriteSheet->LoadFromFile(playerInfo.path)) {
+        std::cerr << "Failed to load: " << std::endl;
     }
-        
-    m_playerIdleDecal = std::make_unique<olc::Decal>(m_playerIdleSpriteSheet.get());
+    std::cout << playerInfo.path;
+    m_playerDecal = std::make_unique<olc::Decal>(m_playerSpriteSheet.get());
 
-    m_idleAnimation = std::make_unique<Animation>(m_playerIdleSpriteSheet.get(), 80, 80, 4, 0.15f);
+    m_animation = std::make_unique<Animation>(
+        m_playerSpriteSheet.get(),
+        playerInfo.sprite_width,
+        playerInfo.sprite_height,
+        playerInfo.columns,    
+        0.15f
+    );
 
-    m_playerPosition = {100.f, 100.f};
+    m_playerPosition = { 100.f, 100.f };
     m_playerVelocity = { 0.0f, 0.0f };
     m_acceleration = 600.0f;
     m_deceleration = 1000.0f;
@@ -54,10 +64,10 @@ void Player::Update(olc::PixelGameEngine* pge, float fElapsedTime)
 
     m_playerPosition += m_playerVelocity * fElapsedTime;
 
-    m_idleAnimation->Update(fElapsedTime);
+    m_animation->Update(fElapsedTime);
 } 
 
 void Player::Render(olc::PixelGameEngine* pge)
 {
-    m_idleAnimation->Draw(pge, m_playerIdleDecal.get(), m_playerPosition);
+    m_animation->Draw(pge, m_playerDecal.get(), m_playerPosition);
 } 

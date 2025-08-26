@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "AssetManager.h"
+
 #include "MainMenuScene.h"
 #include "GameplayScene.h"
 
@@ -15,6 +17,8 @@ Application::~Application()
 
 bool Application::OnUserCreate()
 {
+    AssetManager::Get().LoadSpriteSheet("assets/assets.json", "player_spritesheet");
+
     m_scenes[SceneID::MainMenu] = std::make_unique<MainMenuScene>(this);
     m_scenes[SceneID::Gameplay] = std::make_unique<GameplayScene>(this);
 

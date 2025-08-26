@@ -14,9 +14,9 @@ private:
     void handleInput(olc::PixelGameEngine* pge);
     
 private:
-    std::unique_ptr<olc::Sprite> m_playerIdleSpriteSheet;
-    std::unique_ptr<olc::Decal> m_playerIdleDecal;
-    std::unique_ptr<Animation> m_idleAnimation;
+    std::unique_ptr<olc::Sprite> m_playerSpriteSheet;
+    std::unique_ptr<olc::Decal> m_playerDecal;
+    std::unique_ptr<Animation> m_animation;
 
     olc::vf2d m_playerPosition;
     olc::vf2d m_playerVelocity;
