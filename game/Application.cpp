@@ -2,6 +2,9 @@
 
 #include "Animation.h"
 
+#include "MainMenuScene.h"
+#include "GameplayScene.h"
+
 Application::Application()
 {
     // Pick-a-Shape ?
@@ -14,14 +17,17 @@ Application::~Application()
 
 bool Application::OnUserCreate()
 {
-    m_playerIdleSpriteSheet = new olc::Sprite();
+    m_scenes[SceneID::MainMenu] = std::make_unique<MainMenuScene>();
+    m_scenes[SceneID::Gameplay] = std::make_unique<GameplayScene>();
+
+    m_playerIdleSpriteSheet = std::make_unique<olc::Sprite>();
     if (!m_playerIdleSpriteSheet->LoadFromFile("assets/player_idle.png")) {
         return false;
     }
         
-    m_playerIdleDecal = new olc::Decal(m_playerIdleSpriteSheet);
+    m_playerIdleDecal = std::make_unique<olc::Decal>(m_playerIdleSpriteSheet.get());
 
-    m_idleAnimation = new Animation(m_playerIdleSpriteSheet, 80, 80, 4, 0.15f);
+    m_idleAnimation = std::make_unique<Animation>(m_playerIdleSpriteSheet.get(), 80, 80, 4, 0.15f);
 
     m_playerPosition = {100.f, 100.f};
     m_playerVelocity = { 0.0f, 0.0f };
@@ -67,15 +73,12 @@ bool Application::OnUserUpdate(float fElapsedTime)
 
     Clear(olc::BLACK);
 
-    m_idleAnimation->Draw(this, m_playerIdleDecal, m_playerPosition);
+    m_idleAnimation->Draw(this, m_playerIdleDecal.get(), m_playerPosition);
 
     return true;
 }
 
 bool Application::OnUserDestroy()
 {
-    delete m_playerIdleSpriteSheet;
-    delete m_idleAnimation;
-
     return true;
 }
