@@ -17,8 +17,6 @@ Application::~Application()
 
 bool Application::OnUserCreate()
 {
-    AssetManager::Get().LoadSpriteSheet("assets/assets.json", "player_spritesheet");
-
     m_scenes[SceneID::MainMenu] = std::make_unique<MainMenuScene>(this);
     m_scenes[SceneID::Gameplay] = std::make_unique<GameplayScene>(this);
 
@@ -31,7 +29,7 @@ bool Application::OnUserUpdate(float fElapsedTime)
 {
     m_scenes[m_currentScene]->Update(fElapsedTime);
     
-    Clear(olc::BLACK);
+    Clear(olc::Pixel(125, 98, 103));
 
     m_scenes[m_currentScene]->Render();
 

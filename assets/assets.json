@@ -1,12 +1,12 @@
 {
-  "player_spritesheet": {
-    "path": "assets/textures/player_spritesheet.png",
-    "width": 480,
-    "height": 240,
-    "rows": 3,
-    "columns": 6,
-    "sprite_width": 80,
-    "sprite_height": 80,
-    "default_animation_speed": 0.15
+  "character_body": {
+    "path": "assets/textures/character/character_body/character_tools_drill_body_light_with_specs.png",
+    "width": 192,
+    "height": 256,
+    "rows": 4,
+    "columns": 3,
+    "sprite_width": 64,
+    "sprite_height": 64,
+    "default_animation_speed": 0.07
   }
 }

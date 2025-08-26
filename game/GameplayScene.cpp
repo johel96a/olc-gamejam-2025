@@ -49,7 +49,7 @@ void GameplayScene::Render()
 void GameplayScene::loadShape() 
 {
     m_testSpr = std::make_unique<olc::Sprite>();
-    if (!m_testSpr->LoadFromFile("assets/textures/arrow.png")) {
+    if (!m_testSpr->LoadFromFile("assets/textures/shapes/arrow.png")) {
         std::cerr << "Failed to load misc.png\n";
     }
     const int width = m_testSpr->width;
@@ -95,7 +95,7 @@ void GameplayScene::drawShape()
 {
     for (const auto& p : m_edgePixels)
     {
-        pge->Draw(olc::vi2d(p.x, p.y), olc::WHITE);
+        pge->Draw(olc::vi2d(p.x, p.y), olc::Pixel(99, 84, 91));
     } 
 }
 
