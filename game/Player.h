@@ -2,6 +2,8 @@
 
 #include "Animation.h"
 
+enum class Direction { Right, Down, Up, Left };
+
 class Player {
 public:
     Player();
@@ -24,4 +26,7 @@ private:
     float m_acceleration;
     float m_deceleration;
     float m_maxSpeed;
+    Direction m_direction;
+    Direction m_previousDirection;
+    bool m_flipX;
 };

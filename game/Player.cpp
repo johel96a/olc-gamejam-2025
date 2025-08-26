@@ -26,6 +26,7 @@ Player::Player()
     m_acceleration = 600.0f;
     m_deceleration = 1000.0f;
     m_maxSpeed = 50.0f;
+    m_direction = Direction::Right;
 }
 
 void Player::handleInput(olc::PixelGameEngine* pge) 
@@ -62,12 +63,29 @@ void Player::Update(olc::PixelGameEngine* pge, float fElapsedTime)
         }
     }
 
+    // Update player position
     m_playerPosition += m_playerVelocity * fElapsedTime;
 
+    // Update animation based on player direction
+    if (m_input.y < 0) m_direction = Direction::Up;
+    else if (m_input.y > 0) m_direction = Direction::Down;
+    else if (m_input.x > 0) m_direction = Direction::Right;
+    else if (m_input.x < 0) m_direction = Direction::Left;
+
+    m_flipX = (m_direction == Direction::Left);
+
+    int animationRow = (m_direction == Direction::Left) ? static_cast<int>(Direction::Right) : static_cast<int>(m_direction);
+
+    if (m_direction != m_previousDirection) {
+        m_animation->SetRow(animationRow);
+        m_previousDirection = m_direction;
+    }
+
+    // Update animation
     m_animation->Update(fElapsedTime);
 } 
 
 void Player::Render(olc::PixelGameEngine* pge)
 {
-    m_animation->Draw(pge, m_playerDecal.get(), m_playerPosition);
+    m_animation->Draw(pge, m_playerDecal.get(), m_playerPosition, m_flipX);
 } 

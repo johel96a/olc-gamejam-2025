@@ -17,12 +17,15 @@ void Animation::Update(float elapsedTime)
     }
 }
 
-void Animation::Draw(olc::PixelGameEngine* pge, olc::Decal* decal, olc::vi2d position)
+void Animation::Draw(olc::PixelGameEngine* pge, olc::Decal* decal, olc::vi2d position, bool flipX)
 {
     olc::vi2d sourcePos = { m_currentFrame * m_frameWidth, m_currentRow * m_frameHeight };
     olc::vi2d sourceSize = { m_frameWidth, m_frameHeight };
-    pge->DrawPartialDecal(position, decal, sourcePos, sourceSize);
+    olc::vf2d scale = flipX ? olc::vf2d(-1.0f, 1.0f) : olc::vf2d(1.0f, 1.0f);
+    olc::vf2d drawPos = flipX ? olc::vf2d(position.x + m_frameWidth, position.y) : olc::vf2d(position.x, position.y);
+    pge->DrawPartialDecal(drawPos, decal, sourcePos, sourceSize, scale);
 }
+
 
 void Animation::SetRow(int row)
 {

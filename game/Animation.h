@@ -8,7 +8,7 @@ public:
     virtual ~Animation() = default;
 
     void Update(float elapsedTime);
-    void Draw(olc::PixelGameEngine* pge, olc::Decal* decal, olc::vi2d position);
+    void Draw(olc::PixelGameEngine* pge, olc::Decal* decal, olc::vi2d position, bool flipX = false);
     void SetRow(int row);
     void Reset();
 
