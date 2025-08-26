@@ -10,7 +10,7 @@ Player::Player()
     if (!m_playerSpriteSheet->LoadFromFile(playerInfo.path)) {
         std::cerr << "Failed to load: " << std::endl;
     }
-    std::cout << playerInfo.path;
+
     m_playerDecal = std::make_unique<olc::Decal>(m_playerSpriteSheet.get());
 
     m_animation = std::make_unique<Animation>(
@@ -18,7 +18,7 @@ Player::Player()
         playerInfo.sprite_width,
         playerInfo.sprite_height,
         playerInfo.columns,    
-        0.15f
+        playerInfo.default_animation_speed
     );
 
     m_playerPosition = { 100.f, 100.f };

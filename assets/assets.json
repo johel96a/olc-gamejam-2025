@@ -6,6 +6,7 @@
     "rows": 3,
     "columns": 6,
     "sprite_width": 80,
-    "sprite_height": 80
+    "sprite_height": 80,
+    "default_animation_speed": 0.15
   }
 }

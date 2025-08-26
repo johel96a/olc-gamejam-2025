@@ -14,6 +14,7 @@ struct SpriteSheetInfo {
     int columns;
     int sprite_width;
     int sprite_height;
+    float default_animation_speed;
 };
 
 class AssetManager {
@@ -45,7 +46,8 @@ public:
             sheet.at("rows").get<int>(),
             sheet.at("columns").get<int>(),
             sheet.at("sprite_width").get<int>(),
-            sheet.at("sprite_height").get<int>()
+            sheet.at("sprite_height").get<int>(),
+            sheet.value("default_animation_speed", 0.1f)
         };
 
         spriteSheets[key] = info;
