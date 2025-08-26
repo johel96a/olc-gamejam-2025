@@ -41,6 +41,8 @@ void Player::handleInput(olc::PixelGameEngine* pge)
 
 void Player::Update(olc::PixelGameEngine* pge, float fElapsedTime)
 {
+    // TODO: This got messy fast. Refactor.
+
     handleInput(pge);
 
     if (m_input.mag2() > 0.0f)
