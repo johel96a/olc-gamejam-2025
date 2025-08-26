@@ -1,14 +1,14 @@
 #include "Player.h"
-
 #include "AssetManager.h"
 
 Player::Player() 
 {
+    // Load player sprite sheet info from asset manager
     const SpriteSheetInfo& playerInfo = AssetManager::Get().LoadSpriteSheet("assets/assets.json", "player_spritesheet");
 
     m_playerSpriteSheet = std::make_unique<olc::Sprite>();
     if (!m_playerSpriteSheet->LoadFromFile(playerInfo.path)) {
-        std::cerr << "Failed to load: " << std::endl;
+        std::cerr << "Failed to load sprite sheet: " << playerInfo.path << std::endl;
     }
 
     m_playerDecal = std::make_unique<olc::Decal>(m_playerSpriteSheet.get());
@@ -17,77 +17,105 @@ Player::Player()
         m_playerSpriteSheet.get(),
         playerInfo.sprite_width,
         playerInfo.sprite_height,
-        playerInfo.columns,    
+        playerInfo.columns,
         playerInfo.default_animation_speed
     );
 
-    m_playerPosition = { 100.f, 100.f };
+    m_playerPosition = { 200.f, 150.f };
     m_playerVelocity = { 0.0f, 0.0f };
     m_acceleration = 600.0f;
     m_deceleration = 1000.0f;
-    m_maxSpeed = 50.0f;
+    m_maxSpeed = 20.0f;
     m_direction = Direction::Right;
+    m_previousDirection = m_direction;
+    m_flipX = false;
 }
 
-void Player::handleInput(olc::PixelGameEngine* pge) 
+void Player::handleInput(olc::PixelGameEngine* pge, float fElapsedTime) 
 {
-    m_input = { 0.0f, 0.0f };
+    olc::vf2d targetInput = {0.0f, 0.0f};
 
-    if (pge->GetKey(olc::Key::W).bHeld || pge->GetKey(olc::Key::UP).bHeld)    m_input.y -= 1.0f;
-    if (pge->GetKey(olc::Key::S).bHeld || pge->GetKey(olc::Key::DOWN).bHeld)  m_input.y += 1.0f;
-    if (pge->GetKey(olc::Key::A).bHeld || pge->GetKey(olc::Key::LEFT).bHeld)  m_input.x -= 1.0f;
-    if (pge->GetKey(olc::Key::D).bHeld || pge->GetKey(olc::Key::RIGHT).bHeld) m_input.x += 1.0f;
+    if (pge->GetKey(olc::Key::W).bHeld || pge->GetKey(olc::Key::UP).bHeld)    targetInput.y -= 1.0f;
+    if (pge->GetKey(olc::Key::S).bHeld || pge->GetKey(olc::Key::DOWN).bHeld)  targetInput.y += 1.0f;
+    if (pge->GetKey(olc::Key::A).bHeld || pge->GetKey(olc::Key::LEFT).bHeld)  targetInput.x -= 1.0f;
+    if (pge->GetKey(olc::Key::D).bHeld || pge->GetKey(olc::Key::RIGHT).bHeld) targetInput.x += 1.0f;
+
+    if (targetInput.mag2() > 0.0f)
+        targetInput = targetInput.norm();
+
+    // lerp
+    float smoothing = 10.0f; // Higher = faster interpolation, tweak to feel right
+    m_input += (targetInput - m_input) * smoothing * fElapsedTime;
+
+    if (m_input.mag2() > 1.0f) {
+        m_input = m_input.norm();
+    }
+}
+
+void Player::updateDirection() 
+{
+    Direction newDirection = m_previousDirection;
+
+    if (m_input.y < 0) newDirection = Direction::Up;
+    else if (m_input.y > 0) newDirection = Direction::Down;
+    else if (m_input.x > 0) newDirection = Direction::Right;
+    else if (m_input.x < 0) newDirection = Direction::Left;
+    // else keep previous if no input
+
+    m_flipX = (newDirection == Direction::Left);
+
+    // Left to Right animation row since we flip the decal
+    int animationRow = (newDirection == Direction::Left) ? static_cast<int>(Direction::Right) : static_cast<int>(newDirection);
+
+    if (newDirection != m_previousDirection) {
+        m_animation->SetRow(animationRow);
+        m_previousDirection = newDirection;
+    }
+
+    m_direction = newDirection;
 }
 
 void Player::Update(olc::PixelGameEngine* pge, float fElapsedTime)
 {
-    // TODO: This got messy fast. Refactor.
-
-    handleInput(pge);
+    handleInput(pge, fElapsedTime);
 
     if (m_input.mag2() > 0.0f)
     {
         m_input = m_input.norm();
-        m_playerVelocity += m_input * m_acceleration * fElapsedTime;
-     
-        if (m_playerVelocity.mag() > m_maxSpeed)
-            m_playerVelocity = m_playerVelocity.norm() * m_maxSpeed;
+        m_playerVelocity = m_input * m_maxSpeed;
     }
     else
     {
-        if (m_playerVelocity.mag2() > 0.0f)
-        {
-            olc::vf2d decelDir = -m_playerVelocity.norm();
-            m_playerVelocity += decelDir * m_deceleration * fElapsedTime;
-
-            if (m_playerVelocity.mag2() < 5.0f)
-                m_playerVelocity = { 0.0f, 0.0f };
-        }
+        m_playerVelocity = { 0.0f, 0.0f };
     }
 
-    // Update player position
     m_playerPosition += m_playerVelocity * fElapsedTime;
 
-    // Update animation based on player direction
-    if (m_input.y < 0) m_direction = Direction::Up;
-    else if (m_input.y > 0) m_direction = Direction::Down;
-    else if (m_input.x > 0) m_direction = Direction::Right;
-    else if (m_input.x < 0) m_direction = Direction::Left;
+    updateDirection();
 
-    m_flipX = (m_direction == Direction::Left);
-
-    int animationRow = (m_direction == Direction::Left) ? static_cast<int>(Direction::Right) : static_cast<int>(m_direction);
-
-    if (m_direction != m_previousDirection) {
-        m_animation->SetRow(animationRow);
-        m_previousDirection = m_direction;
-    }
-
-    // Update animation
     m_animation->Update(fElapsedTime);
-} 
+}
 
 void Player::Render(olc::PixelGameEngine* pge)
 {
-    m_animation->Draw(pge, m_playerDecal.get(), m_playerPosition, m_flipX);
-} 
+    olc::vi2d mouseScreenPos = pge->GetMousePos();
+    olc::vf2d mouseWorldPos = olc::vf2d(mouseScreenPos);
+
+    olc::vf2d dir = mouseWorldPos - m_playerPosition;
+
+    if (dir.mag() == 0) {
+        dir = { 1.0f, 0.0f };
+    }
+
+    constexpr float markerRadius = 12.0f;
+    olc::vf2d markerPos = m_playerPosition + dir.norm() * markerRadius;
+
+    pge->FillCircle(markerPos, 2, olc::RED);
+
+    pge->Draw(m_playerPosition, olc::YELLOW);
+
+    // TODO: all sprites are not 80, 80
+    // Center sprite based on 80x80 size
+    olc::vf2d drawPos = m_playerPosition - olc::vf2d(40.0f, 40.0f);
+    m_animation->Draw(pge, m_playerDecal.get(), drawPos, m_flipX);
+}

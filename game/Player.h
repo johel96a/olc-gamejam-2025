@@ -13,8 +13,9 @@ public:
     void Render(olc::PixelGameEngine* pge);
     
 private:
-    void handleInput(olc::PixelGameEngine* pge);
-    
+    void handleInput(olc::PixelGameEngine* pge, float fElapsedTime);
+    void updateDirection();
+
 private:
     std::unique_ptr<olc::Sprite> m_playerSpriteSheet;
     std::unique_ptr<olc::Decal> m_playerDecal;
@@ -27,6 +28,7 @@ private:
     float m_deceleration;
     float m_maxSpeed;
     Direction m_direction;
+    olc::vf2d m_moveDirection;
     Direction m_previousDirection;
     bool m_flipX;
 };
