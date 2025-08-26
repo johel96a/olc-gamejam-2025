@@ -94,6 +94,32 @@ void Player::Update(olc::PixelGameEngine* pge, float fElapsedTime)
     updateDirection();
 
     m_animation->Update(fElapsedTime);
+
+
+    float m_drillCooldown = 0.0f;
+
+    if (m_isDrilling) 
+    {
+        m_drillCooldown -= fElapsedTime;
+        if (m_drillCooldown <= 0.0f) 
+        {
+            olc::vi2d drillCenter = {
+                static_cast<int>(std::round(m_playerPosition.x)),
+                static_cast<int>(std::round(m_playerPosition.y)) + 10
+            };
+
+            for (int dx = -1; dx <= 1; dx++) 
+            {
+                for (int dy = -1; dy <= 1; dy++) 
+                {
+                    olc::vi2d drillPixel = drillCenter + olc::vi2d(dx, dy);
+                    m_drilledPixels.insert(drillPixel);
+                }
+            }
+
+            m_drillCooldown = 0.05f; // 50 ms between drill points
+        }
+    }
 }
 
 void Player::Render(olc::PixelGameEngine* pge)
@@ -107,15 +133,25 @@ void Player::Render(olc::PixelGameEngine* pge)
         dir = { 1.0f, 0.0f };
     }
 
-    constexpr float markerRadius = 12.0f;
-    olc::vf2d markerPos = m_playerPosition + dir.norm() * markerRadius;
-
-    pge->FillCircle(markerPos, 2, olc::RED);
-
-    pge->Draw(m_playerPosition, olc::YELLOW);
+    olc::vf2d markerPos = m_playerPosition + olc::vi2d(0, 10);
+    pge->Draw(markerPos, olc::RED);
 
     // TODO: all sprites are not 80, 80
     // Center sprite based on 80x80 size
     olc::vf2d drawPos = m_playerPosition - olc::vf2d(40.0f, 40.0f);
     m_animation->Draw(pge, m_playerDecal.get(), drawPos, m_flipX);
+
+    for (const auto& p : m_drilledPixels) {
+        pge->Draw(p, olc::RED);
+    }
+}
+
+void Player::ToggleDrill(bool status) 
+{
+    m_isDrilling = status;
+}
+
+const std::unordered_set<olc::vi2d>& Player::GetDrilledPixels() const 
+{
+    return m_drilledPixels;
 }

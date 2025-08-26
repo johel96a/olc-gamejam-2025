@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include "IScene.h"
 #include "Player.h"
 
@@ -20,6 +22,8 @@ private:
     // TODO: refactor
     void loadShape();
     void drawShape();
+    void checkAccuracy();
+    bool isExactEdgePixel(const olc::vi2d& drillPixel, const std::unordered_set<olc::vi2d>& edgeSet);
 
 private:
     GameState m_state;
@@ -27,5 +31,5 @@ private:
     Player m_player;
 
     std::unique_ptr<olc::Sprite> m_testSpr;
-    std::vector<olc::vi2d> m_edgePixels;
+    std::unordered_set<olc::vi2d> m_edgePixels;
 };

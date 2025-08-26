@@ -18,9 +18,16 @@ void GameplayScene::Update(float fElapsedTime)
             }
             break;
 
-        case GameState::Playing:
+        case GameState::Playing: {
             m_player.Update(pge, fElapsedTime);
+     
+            if (pge->GetKey(olc::Key::ENTER).bPressed)
+            {
+                checkAccuracy();
+            }
+
             break;
+        }
     }
 }
 
@@ -33,8 +40,8 @@ void GameplayScene::Render()
             break;
 
         case GameState::Playing:
-            m_player.Render(pge);
             drawShape();
+            m_player.Render(pge);
             break;
     }
 }
@@ -47,6 +54,11 @@ void GameplayScene::loadShape()
     }
     const int width = m_testSpr->width;
     const int height = m_testSpr->height;
+
+    const olc::vi2d shapeOffset = {
+        (pge->ScreenWidth() - width) / 2,
+        (pge->ScreenHeight() - height) / 2
+    };
 
     m_edgePixels.reserve(width * height / 4);
 
@@ -72,8 +84,8 @@ void GameplayScene::loadShape()
                 }
             }
 
-            if (isEdge) {
-                m_edgePixels.push_back({ x, y });
+            if (isEdge) {       
+                m_edgePixels.insert({ x + shapeOffset.x, y + shapeOffset.y });
             }
         }
     }
@@ -85,4 +97,29 @@ void GameplayScene::drawShape()
     {
         pge->Draw(olc::vi2d(p.x, p.y), olc::WHITE);
     } 
+}
+
+void GameplayScene::checkAccuracy()
+{
+    int matched = 0;
+    const auto& drilled = m_player.GetDrilledPixels();
+    std::unordered_set<olc::vi2d> edgeSet(m_edgePixels.begin(), m_edgePixels.end());
+
+    for (const auto& edgePixel : edgeSet)
+    {
+        if (drilled.count(edgePixel) > 0)
+        {
+            matched++;
+        }
+    }
+
+    int total = static_cast<int>(edgeSet.size());
+    float accuracy = total > 0 ? (matched / static_cast<float>(total)) * 100.0f : 0.0f;
+
+    std::cout << "Matched: " << matched << " / " << total 
+            << " (" << accuracy << "% accuracy)" << std::endl;
+}
+
+bool GameplayScene::isExactEdgePixel(const olc::vi2d& drillPixel, const std::unordered_set<olc::vi2d>& edgeSet) {
+    return edgeSet.find(drillPixel) != edgeSet.end();
 }
