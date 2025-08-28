@@ -29,7 +29,7 @@ bool Application::OnUserUpdate(float fElapsedTime)
 {
     m_scenes[m_currentScene]->Update(fElapsedTime);
     
-    Clear(olc::Pixel(125, 98, 103));
+    Clear(olc::BLACK);
 
     m_scenes[m_currentScene]->Render();
 

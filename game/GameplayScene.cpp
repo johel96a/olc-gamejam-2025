@@ -9,7 +9,6 @@ GameplayScene::GameplayScene(olc::PixelGameEngine* pge)
         checkAccuracy();
     });
 
-    m_tileMap.Print();
 }
 
 void GameplayScene::Update(float fElapsedTime) 
