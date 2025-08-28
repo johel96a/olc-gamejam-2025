@@ -4,6 +4,12 @@ GameplayScene::GameplayScene(olc::PixelGameEngine* pge)
     : IScene(pge)
 {
     m_state = GameState::Ready;
+
+    m_player.SetOnDrillCompleteCallback([&]() {
+        checkAccuracy();
+    });
+
+    m_tileMap.Print();
 }
 
 void GameplayScene::Update(float fElapsedTime) 
@@ -49,7 +55,7 @@ void GameplayScene::Render()
 void GameplayScene::loadShape() 
 {
     m_testSpr = std::make_unique<olc::Sprite>();
-    if (!m_testSpr->LoadFromFile("assets/textures/shapes/arrow.png")) {
+    if (!m_testSpr->LoadFromFile("assets/textures/shapes/bang_1.png")) {
         std::cerr << "Failed to load misc.png\n";
     }
     const int width = m_testSpr->width;

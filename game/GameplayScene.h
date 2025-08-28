@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "IScene.h"
+#include "Tilemap.h"
 #include "Player.h"
 
 enum class GameState {
@@ -28,6 +29,7 @@ private:
 private:
     GameState m_state;
 
+    TileMap m_tileMap;
     Player m_player;
 
     std::unique_ptr<olc::Sprite> m_testSpr;

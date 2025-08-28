@@ -67,16 +67,17 @@ void Player::Update(olc::PixelGameEngine* pge, float fElapsedTime)
 
     m_animation->Update(fElapsedTime);
 
+    const olc::vi2d drillCenter = {
+        static_cast<int>(std::round(m_playerPosition.x)),
+        static_cast<int>(std::round(m_playerPosition.y)) + 10
+    };
+
     if (m_isDrilling) 
     {
         m_drillCooldown -= fElapsedTime;
-        if (m_drillCooldown <= 0.0f) 
-        {
-            const olc::vi2d drillCenter = {
-                static_cast<int>(std::round(m_playerPosition.x)),
-                static_cast<int>(std::round(m_playerPosition.y)) + 10
-            };
 
+        if (m_drillCooldown <= 0.0f) 
+        {          
             for (int dx = -1; dx <= 1; dx++) 
             {
                 for (int dy = -1; dy <= 1; dy++) 
@@ -88,7 +89,12 @@ void Player::Update(olc::PixelGameEngine* pge, float fElapsedTime)
             m_drillCooldown = 0.05f; // 50 ms
         }
     }
+
+    // Loop detection and store the new pixels AFTER loop check ???
+
 }
+
+
 
 void Player::Render(olc::PixelGameEngine* pge)
 {

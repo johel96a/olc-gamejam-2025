@@ -1,6 +1,6 @@
 {
   "character_body": {
-    "path": "assets/textures/character/character_body/character_tools_drill_body_light_with_specs.png",
+    "path": "assets/textures/character/character_tools_drill_body_light_with_specs.png",
     "width": 192,
     "height": 256,
     "rows": 4,
@@ -8,5 +8,25 @@
     "sprite_width": 64,
     "sprite_height": 64,
     "default_animation_speed": 0.07
+  },
+  "ground": {
+    "path": "assets/textures/tileset/ground.png",
+    "width": 144,
+    "height": 96,
+    "rows": 6,
+    "columns": 9,
+    "sprite_width": 16,
+    "sprite_height": 16,
+    "default_animation_speed": 0
+  },
+  "path": {
+    "path": "assets/textures/tileset/path.png",
+    "width": 176,
+    "height": 80,
+    "rows": 5,
+    "columns": 11,
+    "sprite_width": 16,
+    "sprite_height": 16,
+    "default_animation_speed": 0
   }
 }

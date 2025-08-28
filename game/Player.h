@@ -29,12 +29,18 @@ public:
 
     const std::unordered_set<olc::vi2d>& GetDrilledPixels() const;
 
+    void SetOnDrillCompleteCallback(std::function<void()> callback) {
+        m_onDrillCompleteCallback = std::move(callback);
+    }
+
 private:
     void handleInput(olc::PixelGameEngine* pge, float fElapsedTime);
     void updateDirection();
     void loadParts();
 
 private:
+    std::function<void()> m_onDrillCompleteCallback;
+
     std::unordered_set<olc::vi2d> m_drilledPixels;
 
     std::unique_ptr<olc::Sprite> m_bodySprite;
@@ -56,4 +62,7 @@ private:
     bool m_flipX;
     bool m_isDrilling;
     float m_drillCooldown;
+    float m_drillActiveTime;
+    bool m_hasStartedLoopCheck;
+    olc::vi2d m_initialDrillPos = { 0, 0 };
 };
