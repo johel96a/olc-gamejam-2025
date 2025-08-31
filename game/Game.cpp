@@ -215,7 +215,7 @@ void Game::RenderShapeSelect()
         for (const auto& p : shapeEdgePixels)
             Draw(p, olc::Pixel(100, 60, 30));
 
-        DrawCenteredString(190, {"Accuracy Score: " + std::to_string((int)m_shapes[m_currentShapeIndex].accuracy) }, olc::DARK_BLUE, 1);
+        DrawCenteredString(190, {"Best Score: " + std::to_string((int)m_shapes[m_currentShapeIndex].accuracy) }, olc::DARK_BLUE, 1);
     }
 
     m_player->Render(this);
