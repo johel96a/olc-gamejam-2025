@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Application.h"
+#include "Game.h"
 
 int main()
 {
-    Application app;
-    if (app.Construct(400, 300, 2, 2))
-        app.Start();
+    Game game;
+    if (game.Construct(320, 240, 4, 4))
+        game.Start();
     return 0;
 }

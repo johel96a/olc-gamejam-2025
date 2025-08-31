@@ -1,4 +1,4 @@
-# build.ps1
+# Made by ChatGPT
 
 # Optional: Change to project root
 Set-Location -Path $PSScriptRoot

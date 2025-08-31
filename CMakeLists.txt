@@ -14,8 +14,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # ----------------------
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/game/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/pge/olcPixelGameEngine.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/pge/olcPGEX_SplashScreen.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/olcPixelGameEngine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/olcPGEX_SplashScreen.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/olcSoundWaveEngine.cpp
 )
 
 # ----------------------
@@ -28,7 +29,7 @@ add_executable(game ${GAME_SOURCES})
 
 target_include_directories(game PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/game/
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/pge
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/
 )
 
 # ----------------------

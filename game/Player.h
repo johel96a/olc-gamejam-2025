@@ -22,13 +22,15 @@ public:
     Player();
     virtual ~Player() = default;
 
-    void Update(olc::PixelGameEngine* pge, float fElapsedTime);
+    void Update(olc::PixelGameEngine* pge, float fElapsedTime, const std::unordered_set<olc::vi2d>& shapeEdgePixels);
     void Render(olc::PixelGameEngine* pge);
-
     void ToggleDrill(bool status);
-
+    bool IsOnShapeEdge(const std::unordered_set<olc::vi2d>& edgePixels);
     const std::unordered_set<olc::vi2d>& GetDrilledPixels() const;
 
+    void SetPosition(const olc::vf2d& pos);
+    void Reset();
+    
     void SetOnDrillCompleteCallback(std::function<void()> callback) {
         m_onDrillCompleteCallback = std::move(callback);
     }
@@ -37,6 +39,13 @@ private:
     void handleInput(olc::PixelGameEngine* pge, float fElapsedTime);
     void updateDirection();
     void loadParts();
+    olc::vi2d GetDrillCenter() const;
+    void DrillAt(const olc::vi2d& center, std::unordered_set<olc::vi2d>& drillData);
+    bool CheckStartingPointReached(const olc::vi2d& drillCenter);
+    void UpdateMovement(olc::PixelGameEngine* pge, float fElapsedTime);   
+    void UpdateDrilling(float fElapsedTime, const std::unordered_set<olc::vi2d>& shapeEdgePixels);
+    void ResetDrillState();
+
 
 private:
     std::function<void()> m_onDrillCompleteCallback;
@@ -58,11 +67,20 @@ private:
     float m_acceleration;
     float m_deceleration;
     float m_maxSpeed;
-
+    bool m_wasDrillingLastFrame;
     bool m_flipX;
     bool m_isDrilling;
     float m_drillCooldown;
     float m_drillActiveTime;
     bool m_hasStartedLoopCheck;
     olc::vi2d m_initialDrillPos = { 0, 0 };
+
+    float m_drillTimer = 0.0f;
+    std::unordered_set<olc::vi2d> m_initialDrillPoints;
+
+    float m_drillGraceTimer = 0.0f;
+    bool m_loopDetectionEnabled = false;
+    bool m_startedInitialPath = false;
+    bool m_startedInitialDrill = false;
+    bool m_collectingInitialPath = false;
 };

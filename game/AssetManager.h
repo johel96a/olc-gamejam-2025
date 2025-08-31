@@ -1,9 +1,11 @@
 #pragma once
 
-#include <unordered_map>
-#include <string>
-#include <stdexcept>
 #include <fstream>
+#include <sstream>
+#include <iostream>
+#include <unordered_map>
+#include <optional>
+#include <stdexcept>
 
 #include <nlohmann_json.hpp>
 using json = nlohmann::json;
@@ -26,34 +28,63 @@ public:
         return instance;
     }
 
-    const SpriteSheetInfo& LoadSpriteSheet(const std::string& filepath, const std::string& key) {
+    std::optional<SpriteSheetInfo> LoadSpriteSheet(const std::string& filepath, const std::string& key) {
+        // Check cache first
         auto it = spriteSheets.find(key);
         if (it != spriteSheets.end()) {
             return it->second;
         }
 
+        // Open file
         std::ifstream file(filepath);
         if (!file.is_open()) {
-            throw std::runtime_error("Failed to open " + filepath);
+            std::cerr << "Error: Failed to open file '" << filepath << "'\n";
+            return std::nullopt;
         }
 
+        // Read entire file into string buffer
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        file.close();
+
+        // Parse JSON
         json assetData;
-        file >> assetData;
-        auto& sheet = assetData.at(key);
+        try {
+            assetData = json::parse(buffer.str());
+        } catch (const json::parse_error& e) {
+            std::cerr << "JSON parse error in '" << filepath << "': " << e.what() << std::endl;
+            return std::nullopt;
+        }
 
-        SpriteSheetInfo info {
-            sheet.at("path").get<std::string>(),
-            sheet.at("width").get<int>(),
-            sheet.at("height").get<int>(),
-            sheet.at("rows").get<int>(),
-            sheet.at("columns").get<int>(),
-            sheet.at("sprite_width").get<int>(),
-            sheet.at("sprite_height").get<int>(),
-            sheet.value("default_animation_speed", 0.1f)
-        };
+        // Find the requested sprite sheet key
+        if (!assetData.contains(key)) {
+            std::cerr << "JSON does not contain key '" << key << "' in file '" << filepath << "'\n";
+            return std::nullopt;
+        }
 
-        spriteSheets[key] = info;
-        return spriteSheets[key];
+        const auto& sheet = assetData.at(key);
+
+        // Validate required fields presence and types
+        try {
+            SpriteSheetInfo info {
+                sheet.at("path").get<std::string>(),
+                sheet.at("width").get<int>(),
+                sheet.at("height").get<int>(),
+                sheet.at("rows").get<int>(),
+                sheet.at("columns").get<int>(),
+                sheet.at("sprite_width").get<int>(),
+                sheet.at("sprite_height").get<int>(),
+                sheet.value("default_animation_speed", 0.1f)
+            };
+
+            // Cache it
+            spriteSheets[key] = info;
+            return info;
+
+        } catch (const json::exception& e) {
+            std::cerr << "Error reading sprite sheet '" << key << "' data: " << e.what() << std::endl;
+            return std::nullopt;
+        }
     }
 
 private:
