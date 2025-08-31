@@ -164,7 +164,7 @@ void Player::UpdateDrilling(float fElapsedTime, const std::unordered_set<olc::vi
         if (m_drillTimer >= 1.0f)
         {
             m_collectingInitialPath = false;
-            m_drillTimer = 0.0f; // Reset for post-delay
+            m_drillTimer = 0.0f;
             std::cout << "Finished collecting initial path\n";
         }
     }

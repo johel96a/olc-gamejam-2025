@@ -2,7 +2,7 @@
 
 Game::Game() 
 {
-    sAppName = "olc-gamejam-2025";
+    sAppName = "Drill the Shape";
 }
 
 Game::~Game() 
@@ -121,10 +121,7 @@ void Game::LoadShape(const std::string& fileName)
         }
     } 
 
-    // Remove extension, e.g., "12.png" -> "12"
     std::string nameWithoutExt = fileName.substr(0, fileName.find_last_of('.'));
-
-    // Convert string to int
     int number = std::stoi(nameWithoutExt);
     shapeData.id = number;
 
@@ -135,7 +132,7 @@ void Game::LoadAllShapes()
 {
     std::vector<std::pair<int, std::string>> numberedFiles;
 
-    std::regex pattern(R"((\d+)\.png)");  // match digits followed by .png
+    std::regex pattern(R"((\d+)\.png)"); // match digits followed by .png
 
     for (const auto& entry : fs::directory_iterator("assets/textures/shapes"))
     {
@@ -156,11 +153,9 @@ void Game::LoadAllShapes()
         }
     }
 
-    // Sort files by number ascending
     std::sort(numberedFiles.begin(), numberedFiles.end(),
         [](const auto& a, const auto& b) { return a.first < b.first; });
 
-    // Load shapes in sorted order
     for (const auto& [number, filename] : numberedFiles)
     {
         LoadShape(filename);

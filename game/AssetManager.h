@@ -28,26 +28,23 @@ public:
         return instance;
     }
 
-    std::optional<SpriteSheetInfo> LoadSpriteSheet(const std::string& filepath, const std::string& key) {
-        // Check cache first
+    std::optional<SpriteSheetInfo> LoadSpriteSheet(const std::string& filepath, const std::string& key)
+     {
         auto it = spriteSheets.find(key);
         if (it != spriteSheets.end()) {
             return it->second;
         }
 
-        // Open file
         std::ifstream file(filepath);
         if (!file.is_open()) {
             std::cerr << "Error: Failed to open file '" << filepath << "'\n";
             return std::nullopt;
         }
 
-        // Read entire file into string buffer
         std::stringstream buffer;
         buffer << file.rdbuf();
         file.close();
 
-        // Parse JSON
         json assetData;
         try {
             assetData = json::parse(buffer.str());
@@ -56,7 +53,6 @@ public:
             return std::nullopt;
         }
 
-        // Find the requested sprite sheet key
         if (!assetData.contains(key)) {
             std::cerr << "JSON does not contain key '" << key << "' in file '" << filepath << "'\n";
             return std::nullopt;
@@ -64,7 +60,6 @@ public:
 
         const auto& sheet = assetData.at(key);
 
-        // Validate required fields presence and types
         try {
             SpriteSheetInfo info {
                 sheet.at("path").get<std::string>(),
@@ -77,7 +72,6 @@ public:
                 sheet.value("default_animation_speed", 0.1f)
             };
 
-            // Cache it
             spriteSheets[key] = info;
             return info;
 
